@@ -1,0 +1,37 @@
+# On démarre le moteur de réécriture d'URL
+RewriteEngine On
+# On précède toutes les URL de ceci
+# Ex: /hetic-web1/correction-sakila1/films
+# C'est une "base" qu'on ajoute à chaque
+# réécriture.
+RewriteBase /hetic-web1/correction-sakila1/
+
+# RewriteRule : Règle de réécriture
+# Si on voit le premier argument, alors on remplace
+# par le deuxième argument
+# RewriteRule [argument1] [argument2]
+# On peut ajouter ce qu'on appelle des "flags" (drapeaux)
+# L : Last, ça veut dire qu'on fait pas d'autre réécriture
+#     pour cette adresse
+# QSA : Query String Append, ça va garder les paramètres en GET
+# Exemples concrets pour une page :
+# RewriteRule films index.php?view=films [L,QSA]
+# RewriteRule voir-film index.php?view=voir-film [L,QSA]
+
+# Dans un système complexe, on aura tendance à
+# fournir les fichiers statiques directement avec
+# Apache (fichiers CSS, JS, images...).
+# Dans ce cas :
+# - On va transformer css/style.css en views/css/style.css
+# - On va transformer js/script.js en views/js/script.js
+# (Notons qu'il n'y a pas le drapeau L)
+RewriteRule ^css/(.*)$ views/css/$1
+RewriteRule ^js/(.*)$ views/js/$1
+
+# Puis, si le fichier demandé n'est pas un vrai fichier (! -f)
+# Et qu'il n'est pas non plus un vrai dossier (! -d)
+# (Donc que l'adresse ne correspond à rien sur le système)
+# Alors on réécrit l'URL en index.php?view=MAPAGE
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?view=$1 [L,QSA]
